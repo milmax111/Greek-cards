@@ -5,10 +5,8 @@ import { nouns }      from './nouns.js';
 import { advPron }    from './advPron.js';
 import { adjectives } from './adjectives.js';
 
-// Все наборы слов
 const data = { verbs, nouns, advPron, adjectives };
 
-// Текущие состояния
 let currentSet      = 'verbs';
 let currentArray    = data[currentSet];
 let currentIndex    = 0;
@@ -17,36 +15,71 @@ let currentLanguage = 'ru-gr';
 let isFlipped       = false;
 
 // DOM-элементы
-const cardEl        = document.getElementById('flashcard');
-const wordEl        = document.getElementById('greek-word');
-const pastEl        = document.getElementById('past-tense');
-const futureEl      = document.getElementById('future-tense');
-const genderEl      = document.getElementById('gender');
-const pluralEl      = document.getElementById('plural');
-const prevBtn       = document.getElementById('previous');
-const nextBtn       = document.getElementById('next');
-const setSelect     = document.getElementById('set-switch');
-const langSelect    = document.getElementById('language-switch');
-const modeSelect    = document.getElementById('mode-switch');
+const cardEl     = document.getElementById('flashcard');
+const wordEl     = document.getElementById('greek-word');
+const pastEl     = document.getElementById('past-tense');
+const futureEl   = document.getElementById('future-tense');
+const pluralEl   = document.getElementById('plural');
+const prevBtn    = document.getElementById('previous');
+const nextBtn    = document.getElementById('next');
+const setSelect  = document.getElementById('set-switch');
+const langSelect = document.getElementById('language-switch');
+const modeSelect = document.getElementById('mode-switch');
 
-// Отрисовывает карточку в зависимости от состояния
+// Вспомогательная: возвращает артикль по роду
+function getArticle(gender) {
+  switch (gender) {
+    case 'm': return 'ο';
+    case 'f': return 'η';
+    case 'n': return 'το';
+    default:  return '';
+  }
+}
+
 function showFlashcard() {
   const entry = currentArray[currentIndex];
 
-  // Очистка всех полей
+  // Очистка
   wordEl.textContent   = '';
   pastEl.textContent   = '';
   futureEl.textContent = '';
-  if (genderEl) genderEl.textContent = '';
-  if (pluralEl) pluralEl.textContent = '';
+  pluralEl.textContent = '';
 
+  if (currentSet === 'nouns') {
+    // Для существительных используем особую логику
+    const article = getArticle(entry.gender);
+    if (!isFlipped) {
+      // лицо: зависит от языка
+      if (currentLanguage === 'ru-gr') {
+        wordEl.textContent = entry.translation;      // русский перевод
+      } else {
+        // греческое слово с артиклем
+        wordEl.textContent = `${article} ${entry.greek}`;
+      }
+    } else {
+      // оборотная сторона: перевёрнутый показ
+      if (currentLanguage === 'ru-gr') {
+        // греческое слово с артиклем
+        wordEl.textContent = `${article} ${entry.greek}`;
+      } else {
+        // русский перевод
+        wordEl.textContent = entry.translation;
+      }
+      // показываем только множественное число
+      pluralEl.textContent = entry.plural;
+    }
+    return;
+  }
+
+  // Для всех остальных наборов (verbs, advPron, adjectives)
+  // Сначала очистка форм
   if (!isFlipped) {
-    // лицевая сторона: показываем перевод или слово
+    // лицо
     wordEl.textContent = currentLanguage === 'ru-gr'
       ? entry.translation
       : entry.greek;
   } else {
-    // оборотная сторона: показываем обратную сторону + доп. поля
+    // оборот
     wordEl.textContent = currentLanguage === 'ru-gr'
       ? entry.greek
       : entry.translation;
@@ -54,21 +87,16 @@ function showFlashcard() {
     if (currentSet === 'verbs') {
       pastEl.textContent   = entry.past;
       futureEl.textContent = entry.future;
-    } else if (currentSet === 'nouns' && genderEl && pluralEl) {
-      genderEl.textContent = entry.gender;
-      pluralEl.textContent = entry.plural;
     }
-    // advPron и adjectives не имеют доп. полей
+    // advPron и adjectives: нет доп. полей
   }
 }
 
-// Переворачивает карточку
 function toggleFlip() {
   isFlipped = !isFlipped;
   showFlashcard();
 }
 
-// Переход к следующей карточке
 function nextCard() {
   currentIndex = isRandomMode
     ? Math.floor(Math.random() * currentArray.length)
@@ -77,7 +105,6 @@ function nextCard() {
   showFlashcard();
 }
 
-// Переход к предыдущей карточке
 function previousCard() {
   currentIndex = isRandomMode
     ? Math.floor(Math.random() * currentArray.length)
@@ -86,7 +113,7 @@ function previousCard() {
   showFlashcard();
 }
 
-// Обработчики переключателей
+// Переключатели
 setSelect.addEventListener('change', e => {
   currentSet   = e.target.value;
   currentArray = data[currentSet];
@@ -107,12 +134,11 @@ modeSelect.addEventListener('change', e => {
   showFlashcard();
 });
 
-// Обработчики кнопок
+// Кнопки и навигация
 prevBtn.addEventListener('click', previousCard);
 nextBtn.addEventListener('click', nextCard);
-
-// Клик по карточке и пробел — переворот
 cardEl.addEventListener('click', toggleFlip);
+
 document.addEventListener('keydown', e => {
   if (e.key === ' ') {
     e.preventDefault();
@@ -124,5 +150,5 @@ document.addEventListener('keydown', e => {
   }
 });
 
-// Инициализация
+// Старт
 showFlashcard();
