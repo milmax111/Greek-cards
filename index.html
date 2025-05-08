@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>200 основных греческих слов</title>
+  <link rel="stylesheet" href="styles.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet"/>
+</head>
+<body>
+  <div class="container">
+    <h1>200 основных греческих слов</h1>
+
+    <div class="switch-container">
+      <label for="set-switch">Набор слов:</label>
+      <select id="set-switch">
+        <option value="verbs">Глаголы</option>
+        <option value="nouns">Существительные</option>
+        <option value="advPron">Наречия и местоимения</option>
+        <option value="adjectives">Прилагательные</option>
+      </select>
+    </div>
+
+    <div class="switch-container">
+      <label for="language-switch">Язык:</label>
+      <select id="language-switch">
+        <option value="ru-gr">Русский → Греческий</option>
+        <option value="gr-ru">Греческий → Русский</option>
+      </select>
+    </div>
+
+    <div class="switch-container">
+      <label for="mode-switch">Режим:</label>
+      <select id="mode-switch">
+        <option value="sequential">Последовательно</option>
+        <option value="random">Случайно</option>
+      </select>
+    </div>
+
+    <div id="flashcard" class="flashcard">
+      <span id="greek-word" class="word"></span>
+      <div class="verb-forms">
+        <span id="past-tense" class="past"></span>
+        <span id="future-tense" class="future"></span>
+      </div>
+      <div class="noun-info">
+        <span id="gender" class="gender"></span>
+        <span id="plural" class="plural"></span>
+      </div>
+    </div>
+
+    <div class="buttons">
+      <button id="previous">← Предыдущая</button>
+      <button id="next">Следующая →</button>
+    </div>
+
+    <p class="instructions">
+      Пробел / клик — переворот; стрелки ← и → — навигация.
+    </p>
+  </div>
+
+  <!-- Подключаем только script.js как ES-модуль -->
+  <script type="module" src="script.js"></script>
+</body>
+</html>
