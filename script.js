@@ -5,9 +5,10 @@ import { nouns }      from './nouns.js';
 import { advPron }    from './advPron.js';
 import { adjectives } from './adjectives.js';
 
-// Ключи должны совпадать с value в <select id="set-switch">
+// Все наборы слов
 const data = { verbs, nouns, advPron, adjectives };
 
+// Текущие состояния
 let currentSet      = 'verbs';
 let currentArray    = data[currentSet];
 let currentIndex    = 0;
@@ -15,33 +16,38 @@ let isRandomMode    = false;
 let currentLanguage = 'ru-gr';
 let isFlipped       = false;
 
-// Элементы
-const cardEl   = document.getElementById('flashcard');
-const mainEl   = document.getElementById('greek-word');
-const pastEl   = document.getElementById('past-tense');
-const futureEl = document.getElementById('future-tense');
-// Получаем, но не падаем, если нет
-const genderEl = document.getElementById('gender');
-const pluralEl = document.getElementById('plural');
+// DOM-элементы
+const cardEl        = document.getElementById('flashcard');
+const wordEl        = document.getElementById('greek-word');
+const pastEl        = document.getElementById('past-tense');
+const futureEl      = document.getElementById('future-tense');
+const genderEl      = document.getElementById('gender');
+const pluralEl      = document.getElementById('plural');
+const prevBtn       = document.getElementById('previous');
+const nextBtn       = document.getElementById('next');
+const setSelect     = document.getElementById('set-switch');
+const langSelect    = document.getElementById('language-switch');
+const modeSelect    = document.getElementById('mode-switch');
 
+// Отрисовывает карточку в зависимости от состояния
 function showFlashcard() {
   const entry = currentArray[currentIndex];
 
-  // очистка
-  mainEl.textContent   = '';
+  // Очистка всех полей
+  wordEl.textContent   = '';
   pastEl.textContent   = '';
   futureEl.textContent = '';
   if (genderEl) genderEl.textContent = '';
   if (pluralEl) pluralEl.textContent = '';
 
   if (!isFlipped) {
-    // лицевая сторона
-    mainEl.textContent = currentLanguage === 'ru-gr'
+    // лицевая сторона: показываем перевод или слово
+    wordEl.textContent = currentLanguage === 'ru-gr'
       ? entry.translation
       : entry.greek;
   } else {
-    // оборотная сторона
-    mainEl.textContent = currentLanguage === 'ru-gr'
+    // оборотная сторона: показываем обратную сторону + доп. поля
+    wordEl.textContent = currentLanguage === 'ru-gr'
       ? entry.greek
       : entry.translation;
 
@@ -52,15 +58,17 @@ function showFlashcard() {
       genderEl.textContent = entry.gender;
       pluralEl.textContent = entry.plural;
     }
-    // advPron и adjectives — доп. полей нет
+    // advPron и adjectives не имеют доп. полей
   }
 }
 
+// Переворачивает карточку
 function toggleFlip() {
   isFlipped = !isFlipped;
   showFlashcard();
 }
 
+// Переход к следующей карточке
 function nextCard() {
   currentIndex = isRandomMode
     ? Math.floor(Math.random() * currentArray.length)
@@ -69,6 +77,7 @@ function nextCard() {
   showFlashcard();
 }
 
+// Переход к предыдущей карточке
 function previousCard() {
   currentIndex = isRandomMode
     ? Math.floor(Math.random() * currentArray.length)
@@ -77,8 +86,8 @@ function previousCard() {
   showFlashcard();
 }
 
-// Переключатели
-document.getElementById('set-switch').addEventListener('change', e => {
+// Обработчики переключателей
+setSelect.addEventListener('change', e => {
   currentSet   = e.target.value;
   currentArray = data[currentSet];
   currentIndex = 0;
@@ -86,19 +95,23 @@ document.getElementById('set-switch').addEventListener('change', e => {
   showFlashcard();
 });
 
-document.getElementById('language-switch').addEventListener('change', e => {
+langSelect.addEventListener('change', e => {
   currentLanguage = e.target.value;
   isFlipped       = false;
   showFlashcard();
 });
 
-document.getElementById('mode-switch').addEventListener('change', e => {
+modeSelect.addEventListener('change', e => {
   isRandomMode = (e.target.value === 'random');
   isFlipped    = false;
   showFlashcard();
 });
 
-// Навигация и переворот
+// Обработчики кнопок
+prevBtn.addEventListener('click', previousCard);
+nextBtn.addEventListener('click', nextCard);
+
+// Клик по карточке и пробел — переворот
 cardEl.addEventListener('click', toggleFlip);
 document.addEventListener('keydown', e => {
   if (e.key === ' ') {
