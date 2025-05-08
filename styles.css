@@ -1,3 +1,5 @@
+/* styles.css */
+
 * {
     margin: 0;
     padding: 0;
@@ -41,6 +43,7 @@ h1 {
     cursor: pointer;
 }
 
+/* Глагольные формы: синий и чуть мельче */
 .verb-forms {
     font-size: 18px;
     margin-top: 10px;
@@ -48,6 +51,7 @@ h1 {
     color: #007BFF;
 }
 
+/* Перевод (не используется сейчас) */
 .translation {
     display: none;
     font-size: 24px;
@@ -67,4 +71,13 @@ h1 {
 
 .buttons button:hover {
     background-color: #45a049;
+}
+
+/* Для существительных: форма множественного числа
+   — такой же стиль, как у глагольных форм */
+.noun-info .plural {
+    font-size: 18px;
+    margin-top: 10px;
+    display: block;
+    color: #007BFF;
 }
